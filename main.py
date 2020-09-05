@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-import sys,os,json
-assert sys.version_info >= (3,8), "This script requires at least Python 3.8"
+import json
+import os
+import sys
+
+assert sys.version_info >= (3, 8), "This script requires at least Python 3.8"
+
 
 def load(l):
     f = open(os.path.join(sys.path[0], l))
     data = f.read()
     j = json.loads(data)
     return j
+
 
 def find_passage(game_desc, pid):
     for p in game_desc["passages"]:
@@ -15,23 +20,30 @@ def find_passage(game_desc, pid):
     return {}
 
 
-
 # ------------------------------------------------------
 
 def update(current, game_desc, choice):
     if current == "":
         return current
+    for i in current["links"]:
+        if choice == i["name"].lower():
+            current = find_passage(game_desc, i["pid"])
     return current
 
+
 def render(current):
+    print("You are at the " + current["name"])
+    print(current["text"])
     pass
+
 
 def get_input(current):
     choice = input("What would you like to do? (type quit to exit) ")
     choice = choice.lower()
-    if choice in ["quit","q","exit"]:
+    if choice in ["quit", "q", "exit"]:
         return "quit"
     return choice
+
 
 # ------------------------------------------------------
 
@@ -46,8 +58,6 @@ def main():
         choice = get_input(current)
 
     print("Thanks for playing!")
-
-
 
 
 if __name__ == "__main__":
